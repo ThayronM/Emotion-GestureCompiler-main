@@ -2,7 +2,9 @@
  Gesture and emotion classifier for autonomous vehicle control.
 
 ## Application
-The project consists of the combination of Guilherme gesture classifier and Boscatti emotion classifier. Libraries such as scikit-learn, PyTorch, OpenCV, TensorFlow, among others, are used.
+The project consists of combining Guilherme's gesture classifier with Boscatti's emotion classifier. Libraries such as scikit-learn, PyTorch, OpenCV, TensorFlow, among others, are used.
+
+This application is an improvement of the research developed by Rafael. All mentioned individuals are members of NERo.
 
 ## Installation
 The gesture and emotion classifiers are compiled in the code ***EmotionGestureCompiler.py***. Install dependencies using *"pip install requirements.txt"*.
