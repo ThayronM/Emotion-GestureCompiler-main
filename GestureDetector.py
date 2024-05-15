@@ -12,7 +12,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import train_test_split
 from imutils.video import FPS
 from utils.utils import setup_logger
-from sklearn.metrics import accuracy_score, confusion_matrix, ConfusionMatrixDisplay
+from sklearn.metrics import accuracy_score, confusion_matrix, ConfusionMatrixDisplay, classification_report
 
 import matplotlib.pyplot as plt
 
@@ -342,10 +342,12 @@ class GestureDetector:
         
         print(f'Database(X):{len(X)}  Database(Y):{len(Y)}')
         print(f'Train(x):{len(x_train)}  Train(y):{len(y_train)}')
-        print(f'Test(x):{len(x_test)}  Test(y):{len(y_test)}')
-        self.knn_classifier.fit(x_train, y_train)
+        print(f'Test(x):{len(x_test)}  Test(y):{len(y_test)}\n')
         
+        self.knn_classifier.fit(x_train, y_train)
         previsao_knn = self.knn_classifier.predict(x_test)
+        
+        print(classification_report(y_test, previsao_knn))
         print('Accuracy score: ',accuracy_score(y_test, previsao_knn)) # compara os testes Y com as previsoes
         mat_confusion = confusion_matrix(y_test, previsao_knn)
         print(mat_confusion)
