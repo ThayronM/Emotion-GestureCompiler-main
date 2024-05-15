@@ -340,7 +340,7 @@ class GestureDetector:
         
         x_train,x_test,y_train,y_test = train_test_split(X, Y, train_size=0.7, random_state=0)
         
-        print(f'Database(X):{len(X)}  Database(Y):{len(Y)}')
+        print(f'\nDatabase(X):{len(X)}  Database(Y):{len(Y)}')
         print(f'Train(x):{len(x_train)}  Train(y):{len(y_train)}')
         print(f'Test(x):{len(x_test)}  Test(y):{len(y_test)}\n')
         
