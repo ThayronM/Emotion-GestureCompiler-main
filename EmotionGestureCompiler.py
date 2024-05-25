@@ -3,7 +3,7 @@ import numpy as np
 import torch
 
 from emotion_detector import EmotionDetector
-from GestureDetector import GestureDetector
+from GestureDetector_rs import GestureDetector
 from imutils.video import FPS
 from utils.utils import setup_logger
 
@@ -122,6 +122,7 @@ class EmotionGestureCompiler:
                         case "GOOD":        # confirms prediction
                             counter["GOOD"] -= 1
                             if counter["GOOD"] < 1:
+                                self.Gesture.save_gesture(path= 'lists/gesture_txt.txt')
                                 self.Gesture.saves_to_dataBase()
                             counter["BAD"] = 10     # reset other counter
 

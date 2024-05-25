@@ -312,12 +312,7 @@ class GestureDetector:
             else:
                 if self.resp != 'I':
                     print(f'Class: {self.resp}')
-                    TAG_I = True
-        # if self.resp != '??':
-        #     if self.resp == 'I':
-        #         None 
-        #     else:
-        #         print(f'Class: {self.resp}')    
+                    TAG_I = True 
         return image
     
     def train_xlsx (self, trainData_path: str):
@@ -448,6 +443,14 @@ class GestureDetector:
 
         # resets matrix 
         self.reset_pred()
+        
+    def save_gesture(self, path: str):
+        try:
+            with open(path, 'a') as f:  # Abrir o arquivo no modo de 'append'
+                f.write(f'{self.resp}\n')
+        except Exception as e:
+            print(f"Error: {e}")
+        
         
 #%%
 if __name__ == "__main__":

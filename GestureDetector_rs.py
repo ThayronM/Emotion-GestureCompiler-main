@@ -218,48 +218,6 @@ class GestureDetector:
         self.plot_sample()
         return
     
-    def plot_gesture_positions(self):
-        plt.figure(figsize=(10, 6))
-        plt.title('Posição do gesto realizado durante a captura')
-        plt.xlabel('Tempo (quadros/linhas)')
-        plt.ylabel('Posição das articulações')
-        
-        # Transponha a lista de posições para ter o tempo como a dimensão principal
-        positions_array = np.array(self.gesture_positions).T
-        
-        for i, joint_positions in enumerate(positions_array):
-            joint_name = self.name_order[i]
-            plt.plot(joint_positions, label=joint_name)
-        
-        plt.legend(loc='upper left')
-        plt.grid(True)
-        plt.tight_layout()
-        plt.show()
-    
-    
-    def plot_sample(self):
-        class_A_files = [f for f in os.listdir('Base_de_dados/A') if f.endswith('.xlsx')]
-        if not class_A_files:
-            print("No samples found for class A.")
-            return
-        
-        sample_file = np.random.choice(class_A_files)
-        sample_data = pd.read_excel(os.path.join('Base_de_dados/A', sample_file)).to_numpy()
-        
-        plt.figure(figsize=(10, 6))
-        plt.title('Posição das articulações da amostra da classe A')
-        plt.xlabel('Tempo (quadros)')
-        plt.ylabel('Posição das articulações')
-        
-        for i in range(sample_data.shape[1]):
-            joint_name = self.name_order[i]
-            plt.plot(sample_data[:, i], label=joint_name)
-        
-        plt.legend(loc='upper left')
-        plt.grid(True)
-        plt.xlim(-100,100) # escala em x
-        plt.tight_layout()
-        plt.show()
     
     def reset_pred (self):
         self.matrix = np.zeros((1,18))
@@ -313,11 +271,7 @@ class GestureDetector:
                 if self.resp != 'I':
                     print(f'Class: {self.resp}')
                     TAG_I = True
-        # if self.resp != '??':
-        #     if self.resp == 'I':
-        #         None 
-        #     else:
-        #         print(f'Class: {self.resp}')    
+
         return image
     
     def train_xlsx (self, trainData_path: str):
@@ -401,6 +355,13 @@ class GestureDetector:
 
         # resets matrix 
         self.reset_pred()
+        
+    def save_gesture(self, path: str):
+        try:
+            with open(path, 'a') as f:  # Abrir o arquivo no modo de 'append'
+                f.write(f'{self.resp}\n')
+        except Exception as e:
+            print(f"Error: {e}")
         
 #%%
 if __name__ == "__main__":
