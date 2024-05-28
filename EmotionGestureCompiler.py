@@ -124,6 +124,7 @@ class EmotionGestureCompiler:
                             if counter["GOOD"] < 1:
                                 self.Gesture.save_gesture(path= 'lists/gesture_txt.txt')
                                 self.Gesture.saves_to_dataBase()
+                                self.Gesture.gesture_ros()
                             counter["BAD"] = 10     # reset other counter
 
                         case "BAD":         # rejects prediction

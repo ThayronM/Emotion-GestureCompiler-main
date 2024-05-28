@@ -362,6 +362,10 @@ class GestureDetector:
                 f.write(f'{self.resp}\n')
         except Exception as e:
             print(f"Error: {e}")
+            
+            
+    def gesture_ros(self):
+        return self.resp
         
 #%%
 if __name__ == "__main__":
