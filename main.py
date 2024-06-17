@@ -7,7 +7,7 @@ def main ():
         model_name = "resnet18.onnx",
         model_option = "onnx",
         backend_option = 2, #1
-        providers = 1,
+        providers = 2,
         fp16 = False,
         num_faces = 1,
         train_path = 'Base_de_dados',

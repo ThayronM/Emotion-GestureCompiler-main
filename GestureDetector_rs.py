@@ -12,7 +12,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import train_test_split
 from imutils.video import FPS
 from utils.utils import setup_logger
-from sklearn.metrics import accuracy_score, confusion_matrix
+from sklearn.metrics import accuracy_score, confusion_matrix, ConfusionMatrixDisplay, classification_report
 
 import matplotlib.pyplot as plt
 
@@ -270,8 +270,7 @@ class GestureDetector:
             else:
                 if self.resp != 'I':
                     print(f'Class: {self.resp}')
-                    TAG_I = True
-
+                    TAG_I = True 
         return image
     
     def train_xlsx (self, trainData_path: str):
@@ -287,18 +286,25 @@ class GestureDetector:
                 # colect the data
                 dados = pd.read_excel(os.path.join(sub, file)).to_numpy()
                 
+                
                 # saves in array-like
                 X.append(extract_features(dados))
                 Y.append(file.split('_')[0])    # awnser in the name of the file
         
-        self.knn_classifier.fit(X, Y)
+        x_train,x_test,y_train,y_test = train_test_split(X, Y, train_size=0.7, random_state=0)
         
-        previsao_knn = self.knn_classifier.predict(X)
-        mat_confusion = confusion_matrix(Y, previsao_knn)
-        # print(f'Database: {previsao_knn}')
-        print('Accuracy score: ',accuracy_score(Y, previsao_knn)) # compara os testes Y com as previsoes
-        print(mat_confusion)
+        print(f'\nDatabase(X):{len(X)}  Database(Y):{len(Y)}')
+        print(f'Train(x):{len(x_train)}  Train(y):{len(y_train)}')
+        print(f'Test(x):{len(x_test)}  Test(y):{len(y_test)}\n')
         
+        self.knn_classifier.fit(x_train, y_train)
+        previsao_knn = self.knn_classifier.predict(x_test)
+        
+        # print(classification_report(y_test, previsao_knn))
+        # print('Accuracy score: ',accuracy_score(y_test, previsao_knn)) # compara os testes Y com as previsoes
+        # mat_confusion = confusion_matrix(y_test, previsao_knn)
+        # print(mat_confusion)
+        # print(f'Database: {previsao_knn}')    
         return
     
     def classify_video (self, matrix, threshold:float=0.9):
@@ -363,9 +369,9 @@ class GestureDetector:
         except Exception as e:
             print(f"Error: {e}")
             
-            
     def gesture_ros(self):
         return self.resp
+        
         
 #%%
 if __name__ == "__main__":
