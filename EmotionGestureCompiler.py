@@ -13,6 +13,7 @@ os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 class EmotionGestureCompiler:
     def __init__(
         self,
+        com_ros: None,
         model_name: str = "resnet18.onnx",
         model_option: str = "onnx",
         backend_option: int = 0 if torch.cuda.is_available() else 1,
@@ -20,10 +21,11 @@ class EmotionGestureCompiler:
         fp16: bool = False,
         num_faces: int = 1,
         train_path: str = 'Base_de_dados',
-        k : int = 7
+        k : int = 7,
     ):
         self.gestures_list = ['A', 'B', 'C', 'D', 'E']
         self.emotions_list = {0: "BAD", 1: "GOOD", 2: "NEUTRAL"}
+        self.com_ros = com_ros
 
         self.logger = setup_logger(__name__)    # debug logger
         
@@ -125,6 +127,7 @@ class EmotionGestureCompiler:
                                 self.Gesture.save_gesture(path= 'lists/gesture_txt.txt')
                                 # self.Gesture.saves_to_dataBase()
                                 self.Gesture.gesture_ros()
+                                # self.com_ros.publish(self.gesture_ros())
                                 self.Gesture.reset_pred()
                             counter["BAD"] = 10     # reset other counter
 
