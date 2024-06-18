@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from EmotionGestureCompiler import EmotionGestureCompiler
 import os
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0' 
