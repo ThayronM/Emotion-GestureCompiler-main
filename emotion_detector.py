@@ -224,6 +224,7 @@ class EmotionDetector:
 
         while success:
             try:
+                self.img = cv2.flip(self.img, 1)  # Flip the image horizontally
                 self.process_frame(self.img)
                 if display_window:
                     cv2.imshow("Output", self.img)
