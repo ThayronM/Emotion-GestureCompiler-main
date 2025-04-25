@@ -13,7 +13,7 @@ def main ():
         train_path = 'Base_de_dados',
         k = 7
     )
-    model.video(video_path = 0)
+    model.video(video_path = 1)
 
 if __name__ == "__main__":
     main()

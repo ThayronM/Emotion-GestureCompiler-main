@@ -316,6 +316,7 @@ class GestureDetector:
         return image
     
     def train_xlsx (self, trainData_path: str):
+        start_time = time.time()
         subfiles = [f.path for f in os.scandir(trainData_path) if f.is_dir()]
         X = []  # train data
         Y = []  # target values
@@ -333,8 +334,9 @@ class GestureDetector:
                 X.append(extract_features(dados))
                 Y.append(file.split('_')[0])    # awnser in the name of the file
         
-        x_train,x_test,y_train,y_test = train_test_split(X, Y, train_size=0.7, random_state=0)
+        x_train,x_test,y_train,y_test = train_test_split(X, Y, train_size=0.7, random_state=0, stratify=Y)
         
+        print(f'Tempo de execução: {time.time() - start_time:.4f} segundos')
         print(f'\nDatabase(X):{len(X)}  Database(Y):{len(Y)}')
         print(f'Train(x):{len(x_train)}  Train(y):{len(y_train)}')
         print(f'Test(x):{len(x_test)}  Test(y):{len(y_test)}\n')

@@ -9,7 +9,7 @@ import mediapipe as mp
 
 from utils.Mconfusao import Mconfusao
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, learning_curve
 from imutils.video import FPS
 from utils.utils import setup_logger
 from sklearn.metrics import accuracy_score, confusion_matrix, ConfusionMatrixDisplay, classification_report
@@ -214,8 +214,8 @@ class GestureDetector:
         cap.release()
         cv2.destroyAllWindows()
         
-        self.plot_gesture_positions()
-        self.plot_sample()
+        # self.plot_gesture_positions()
+        # self.plot_sample()
         return
     
     
@@ -273,39 +273,108 @@ class GestureDetector:
                     TAG_I = True 
         return image
     
-    def train_xlsx (self, trainData_path: str):
+    
+
+
+# Supondo que a função 'extract_features' e 'get_allFiles' já estejam definidas no seu código
+
+    def train_xlsx(self, trainData_path: str):
+        start_time = time.time()
         subfiles = [f.path for f in os.scandir(trainData_path) if f.is_dir()]
         X = []  # train data
         Y = []  # target values
 
         for sub in subfiles:
             all_files = get_allFiles(sub)
-            self.file_counter[str(sub.split('\\')[1])] = len(all_files)     # creates file counter
+            self.file_counter[str(sub.split('\\')[1])] = len(all_files)  # creates file counter
 
             for file in all_files:
-                # colect the data
+                # Coleta os dados
                 dados = pd.read_excel(os.path.join(sub, file)).to_numpy()
-                
-                
-                # saves in array-like
+
+                # Salva em um array-like
                 X.append(extract_features(dados))
-                Y.append(file.split('_')[0])    # awnser in the name of the file
+                Y.append(file.split('_')[0])  # Resposta no nome do arquivo
+            
+        # Divisão dos dados em treino e teste
+        x_train, x_test, y_train, y_test = train_test_split(X, Y, train_size=0.7, random_state=0)
         
-        x_train,x_test,y_train,y_test = train_test_split(X, Y, train_size=0.7, random_state=0)
-        
+        print(f'Time to load data: {time.time() - start_time}')
         print(f'\nDatabase(X):{len(X)}  Database(Y):{len(Y)}')
         print(f'Train(x):{len(x_train)}  Train(y):{len(y_train)}')
         print(f'Test(x):{len(x_test)}  Test(y):{len(y_test)}\n')
         
+        # Inicializando o classificador KNN
+        self.knn_classifier = KNeighborsClassifier(n_neighbors=7)
+        train_sizes = np.linspace(0.1, 1.0, 100)
+        # Gerando a curva de aprendizado
+        train_sizes, train_scores, test_scores = learning_curve(
+            self.knn_classifier, X, Y, cv=5, n_jobs=-1, train_sizes=train_sizes
+        )
+
+        # Calculando a média e o desvio padrão dos scores
+        train_mean = train_scores.mean(axis=1)
+        test_mean = test_scores.mean(axis=1)
+        train_std = train_scores.std(axis=1)
+        test_std = test_scores.std(axis=1)
+
+        # Plotando a curva de aprendizado
+        plt.figure(figsize=(10, 6))
+        plt.plot(train_sizes, train_mean, color='blue', label='Training score')
+        plt.plot(train_sizes, test_mean, color='green', label='Cross-validation score')
+
+        # Área sombreada representando o desvio padrão
+        plt.fill_between(train_sizes, train_mean - train_std, train_mean + train_std, color='blue', alpha=0.2)
+        plt.fill_between(train_sizes, test_mean - test_std, test_mean + test_std, color='green', alpha=0.2)
+
+        plt.title('Learning Curve for KNN Classifier')
+        plt.xlabel('Training Size')
+        plt.ylabel('Accuracy')
+        plt.legend(loc='best')
+        plt.grid(True)
+        plt.show()
+
+        # Treinando o modelo KNN
         self.knn_classifier.fit(x_train, y_train)
         previsao_knn = self.knn_classifier.predict(x_test)
-        
-        # print(classification_report(y_test, previsao_knn))
-        # print('Accuracy score: ',accuracy_score(y_test, previsao_knn)) # compara os testes Y com as previsoes
-        # mat_confusion = confusion_matrix(y_test, previsao_knn)
-        # print(mat_confusion)
-        # print(f'Database: {previsao_knn}')    
+        print(f"Accuracy on Test Data: {accuracy_score(y_test, previsao_knn)}")
+
         return
+    # def train_xlsx (self, trainData_path: str):
+    #     start_time = time.time()
+    #     subfiles = [f.path for f in os.scandir(trainData_path) if f.is_dir()]
+    #     X = []  # train data
+    #     Y = []  # target values
+
+    #     for sub in subfiles:
+    #         all_files = get_allFiles(sub)
+    #         self.file_counter[str(sub.split('\\')[1])] = len(all_files)     # creates file counter
+
+    #         for file in all_files:
+    #             # colect the data
+    #             dados = pd.read_excel(os.path.join(sub, file)).to_numpy()
+                
+                
+    #             # saves in array-like
+    #             X.append(extract_features(dados))
+    #             Y.append(file.split('_')[0])    # awnser in the name of the file
+        
+    #     x_train,x_test,y_train,y_test = train_test_split(X, Y, train_size=0.7, random_state=0)
+        
+    #     print(f'Time to load data: {time.time() - start_time}')
+    #     print(f'\nDatabase(X):{len(X)}  Database(Y):{len(Y)}')
+    #     print(f'Train(x):{len(x_train)}  Train(y):{len(y_train)}')
+    #     print(f'Test(x):{len(x_test)}  Test(y):{len(y_test)}\n')
+        
+    #     self.knn_classifier.fit(x_train, y_train)
+    #     previsao_knn = self.knn_classifier.predict(x_test)
+        
+    #     # print(classification_report(y_test, previsao_knn))
+    #     # print('Accuracy score: ',accuracy_score(y_test, previsao_knn)) # compara os testes Y com as previsoes
+    #     # mat_confusion = confusion_matrix(y_test, previsao_knn)
+    #     # print(mat_confusion)
+    #     # print(f'Database: {previsao_knn}')    
+    #     return
     
     def classify_video (self, matrix, threshold:float=0.9):
             # makes prediction
@@ -375,7 +444,6 @@ class GestureDetector:
         
 #%%
 if __name__ == "__main__":
-
     data_directory = 'Base_de_dados'
     G = GestureDetector(['A', 'B', 'C', 'D', 'E'], data_directory)
     # G.classify_xlsx(data_directory[1])

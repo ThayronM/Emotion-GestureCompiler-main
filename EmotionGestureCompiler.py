@@ -13,7 +13,7 @@ os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 class EmotionGestureCompiler:
     def __init__(
         self,
-        com_ros: None,
+        # com_ros: None,
         model_name: str = "resnet18.onnx",
         model_option: str = "onnx",
         backend_option: int = 0 if torch.cuda.is_available() else 1,
@@ -25,7 +25,7 @@ class EmotionGestureCompiler:
     ):
         self.gestures_list = ['A', 'B', 'C', 'D', 'E']
         self.emotions_list = {0: "BAD", 1: "GOOD", 2: "NEUTRAL"}
-        self.com_ros = com_ros
+        # self.com_ros = com_ros
 
         self.logger = setup_logger(__name__)    # debug logger
         
